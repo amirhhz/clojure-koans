@@ -31,19 +31,27 @@
   "You can regain the full argument if you like arguing"
   (= {:original-parts ["Steven" "Hawking"] :named-parts {:first "Steven" :last "Hawking"}}
      (let [[first-name last-name :as full-name] ["Steven" "Hawking"]]
-       __))
+       {:original-parts [first-name last-name]
+        :named-parts {:first first-name
+                      :last last-name}}))
 
   "Break up maps by key"
   (= "123 Test Lane, Testerville, TX"
      (let [{street-address :street-address, city :city, state :state} test-address]
-            __))
+            (str street-address ", " city ", " state)))
 
   "Or more succinctly"
   (= "123 Test Lane, Testerville, TX"
-     (let [{:keys [street-address __ __]} test-address]
-            __))
+     (let [{:keys [street-address city state]} test-address]
+            (str street-address ", " city ", " state)))
 
   "All together now!"
   (= "Test Testerson, 123 Test Lane, Testerville, TX"
-     (___ ["Test" "Testerson"] test-address))
+     ((fn [[name1 name2] addr]
+        (let [{:keys [street-address city state]} addr]
+          (apply str
+                 (interpose ", "
+                            (list (str name1 " " name2)
+                                  street-address city state)))))
+        ["Test" "Testerson"] test-address))
 )
